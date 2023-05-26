@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/DisjointSets.cpp
+DisjointSets.h
+/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/DisjointSets.h
+
 /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/DisjointSets.h
 vector
 -
@@ -34,6 +38,10 @@ memory
 DisjointSets.h
 /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/DisjointSets.h
 
+/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Maze.cpp
+Maze.h
+/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Maze.h
+
 /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Maze.h
 vector
 -
@@ -43,8 +51,14 @@ iostream
 -
 random
 -
+cstdlib
+-
 GLFW/glfw3.h
 -
+
+/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Timer.cpp
+Timer.h
+/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Timer.h
 
 /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Timer.h
 chrono

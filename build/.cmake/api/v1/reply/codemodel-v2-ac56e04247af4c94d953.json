@@ -6,7 +6,6 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.0"
@@ -39,7 +38,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "MazeGenerator::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-MazeGenerator-Debug-256a4118f6912fa3cd7a.json",
+					"jsonFile" : "target-MazeGenerator-Debug-4dae8358bba394f07b7e.json",
 					"name" : "MazeGenerator",
 					"projectIndex" : 0
 				}
@@ -49,12 +48,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/build",
-		"source" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator"
+		"build" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build",
+		"source" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 3
+		"minor" : 0
 	}
 }
