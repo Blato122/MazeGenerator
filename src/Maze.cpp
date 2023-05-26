@@ -175,3 +175,10 @@ void Maze::display() const {
     glfwTerminate();
 
 }
+
+// doesnt work yet
+void Maze::moveLeft(int row, int src_col, int dest_col) const {
+    const char src = maze[row][src_col];
+    const char dest = maze[row][dest_col];
+
+}

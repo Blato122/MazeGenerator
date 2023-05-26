@@ -33,6 +33,9 @@ public:
     void drawHorizontalLine(float x_from, float x_to, float y) const;
     void draw() const;
     void display() const;
+
+    // doesnt work yet
+    void moveLeft(int row, int src_col, int dest_col) const;
 };
 
 #endif // MAZE_H
