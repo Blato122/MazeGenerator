@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build",
+  "command": "/usr/bin/g++    -g   -std=gnu++2a -o CMakeFiles/MazeGenerator.dir/src/main.cpp.o -c /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/main.cpp",
+  "file": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/main.cpp"
+},
+{
+  "directory": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build",
+  "command": "/usr/bin/g++    -g   -std=gnu++2a -o CMakeFiles/MazeGenerator.dir/src/Graph.cpp.o -c /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Graph.cpp",
+  "file": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Graph.cpp"
+},
+{
+  "directory": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build",
+  "command": "/usr/bin/g++    -g   -std=gnu++2a -o CMakeFiles/MazeGenerator.dir/src/DisjointSets.cpp.o -c /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/DisjointSets.cpp",
+  "file": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/DisjointSets.cpp"
+},
+{
+  "directory": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build",
+  "command": "/usr/bin/g++    -g   -std=gnu++2a -o CMakeFiles/MazeGenerator.dir/src/Timer.cpp.o -c /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Timer.cpp",
+  "file": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Timer.cpp"
+},
+{
+  "directory": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build",
+  "command": "/usr/bin/g++    -g   -std=gnu++2a -o CMakeFiles/MazeGenerator.dir/src/Maze.cpp.o -c /home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Maze.cpp",
+  "file": "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/src/Maze.cpp"
+}
+]

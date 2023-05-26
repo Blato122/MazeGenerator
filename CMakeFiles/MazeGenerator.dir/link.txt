@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/MazeGenerator.dir/src/main.cpp.o CMakeFiles/MazeGenerator.dir/src/Graph.cpp.o  -o MazeGenerator  -lglfw 
