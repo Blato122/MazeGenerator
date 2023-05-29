@@ -8,6 +8,7 @@
 #include <random>
 #include <chrono>
 #include <memory>
+#include <cstdlib>
 
 #include "DisjointSets.h"
 

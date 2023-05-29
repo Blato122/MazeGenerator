@@ -10,16 +10,11 @@
 #endif // DEBUG
 
 Graph::Graph(const int rows_, const int cols_) : rows(rows_), cols(cols_), size(rows * cols), ds(std::make_unique<DisjointSets>(size)) {
-    if (rows < 2 || cols < 2) { // sig segv - może naprawić?
-        return;
+    if (rows < 2 || cols < 2) {
+        exit(1);
     }
     generate_edges();
-    // ds = new DisjointSets(size);
 }
-
-// Graph::~Graph() {
-//     delete ds;
-// }
 
 void Graph::generate_edges() {
     for (int i = 0; i + cols < size; ++i) {
