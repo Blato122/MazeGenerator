@@ -22,8 +22,7 @@ private:
 
     std::vector<Edge> G; // graph
     std::vector<Edge> MST; // minimal spanning tree
-    // DisjointSets *ds;
-    std::unique_ptr<DisjointSets> ds; // hehe
+    std::unique_ptr<DisjointSets> ds;
 
     void generate_edges();
     void add_edge(const int from, const int to);
@@ -31,7 +30,6 @@ private:
     
 public:
     Graph(const int rows, const int cols);
-    // ~Graph();
     std::vector<Edge> getMST();
     static void print(const std::vector<Edge>& g);
 };

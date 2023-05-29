@@ -9,7 +9,7 @@ Maze::Maze(const int rows, const int cols, const std::vector<Edge>& MST) : rows(
         }
     }
 
-    std::sort(vertical.begin(), vertical.end(), [](Edge& e1, Edge& e2) { //!!
+    std::sort(vertical.begin(), vertical.end(), [](Edge& e1, Edge& e2) { // !!!
         return static_cast<bool>(e1.first < e2.first);
     });
     std::sort(horizontal.begin(), horizontal.end(), [](Edge& e1, Edge& e2) {
@@ -95,8 +95,11 @@ void Maze::drawHorizontalLine(float x_from, float x_to, float y) const {
 
 void Maze::drawRect(float bl_x, float bl_y, float r, float g, float b) const {
     glBegin(GL_QUADS);
-    //check r g b czy miedzy 0 a 1!!!
-        glColor3f(r, g, b); // some color
+        if (r >= 0 && r <= 1 && g >= 0 && g <= 1 && b >= 0 && b <= 1) {
+            glColor3f(r, g, b); // some color
+        } else {
+            glColor3f(0, 0, 1); // blue
+        }
         glVertex2f(bl_x + 0.5, bl_y + 0.25); // bottom-left
         glVertex2f(bl_x + 1.5, bl_y + 0.25); // bottom-right
         glVertex2f(bl_x + 1.5, bl_y + 0.75); // top-right
@@ -108,7 +111,6 @@ void Maze::drawRect(float bl_x, float bl_y, float r, float g, float b) const {
 void Maze::draw() const {
     int width = getWidth();
     int height = getHeight();
-    std::cout << "width: " << width << ", height: " << height << std::endl;
 
     int vert_row_fix = 0;
     int hrzn_row_fix = 0;
