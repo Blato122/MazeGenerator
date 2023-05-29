@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build"
+			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -79,7 +79,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "16"
+			"value" : "22"
 		},
 		{
 			"name" : "CMAKE_CACHE_PATCH_VERSION",
@@ -91,7 +91,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "3"
+			"value" : "1"
 		},
 		{
 			"name" : "CMAKE_COLOR_MAKEFILE",
@@ -514,10 +514,6 @@
 			"properties" : 
 			[
 				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
 					"name" : "HELPSTRING",
 					"value" : "No help, variable specified on the command line."
 				}
@@ -595,7 +591,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator"
+			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -943,7 +939,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/usr/share/cmake-3.16"
+			"value" : "/usr/share/cmake-3.22"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1194,42 +1190,6 @@
 			"value" : "[/usr/lib/x86_64-linux-gnu/libOpenGL.so][/usr/lib/x86_64-linux-gnu/libGLX.so][/usr/include][c ][v()]"
 		},
 		{
-			"name" : "GLFW_BUILD_DOCS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "BOOL",
-			"value" : "OFF"
-		},
-		{
-			"name" : "GLFW_BUILD_EXAMPLES",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "BOOL",
-			"value" : "OFF"
-		},
-		{
-			"name" : "GLFW_BUILD_TESTS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "BOOL",
-			"value" : "OFF"
-		},
-		{
 			"name" : "MazeGenerator_BINARY_DIR",
 			"properties" : 
 			[
@@ -1239,7 +1199,19 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/build"
+			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/build"
+		},
+		{
+			"name" : "MazeGenerator_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
 		},
 		{
 			"name" : "MazeGenerator_SOURCE_DIR",
@@ -1251,7 +1223,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator"
+			"value" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator"
 		},
 		{
 			"name" : "OPENGL_EGL_INCLUDE_DIR",

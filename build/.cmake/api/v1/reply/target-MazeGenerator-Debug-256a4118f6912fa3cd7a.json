@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator"
+			"path" : "/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/MazeGenerator"
 		}
 	],
 	"backtrace" : 1,
@@ -48,13 +48,21 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g  "
+					"fragment" : "-g"
 				},
 				{
 					"fragment" : "-std=gnu++2a"
 				}
 			],
 			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "20"
+			},
 			"sourceIndexes" : 
 			[
 				0,
