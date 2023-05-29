@@ -1,3 +1,0 @@
-/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/build/CMakeFiles/MazeGenerator.dir
-/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/build/CMakeFiles/edit_cache.dir
-/home/blato/Desktop/ALGORYTMY_2/MazeGenerator/MazeGenerator/build/CMakeFiles/rebuild_cache.dir
