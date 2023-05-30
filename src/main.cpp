@@ -3,18 +3,8 @@
 
 #include "Maze.h"
 #include "Graph.h"
-#include "Timer.h"
-
-#define DEBUG
-
-#ifdef DEBUG
-#define Time(x) Timer(x)
-#else
-#define Time(x)
-#endif // DEBUG
 
 int main(int argc, char *argv[]) {
-    auto t = Time("main()");
     int rows = 0;
     int cols = 0;
 
@@ -27,6 +17,7 @@ int main(int argc, char *argv[]) {
     }
 
     Graph g(rows, cols);
+    g.kruskal();
     auto MST = g.getMST();
 
     Maze m(rows, cols, MST);

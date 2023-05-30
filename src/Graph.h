@@ -26,11 +26,11 @@ private:
 
     void generate_edges();
     void add_edge(const int from, const int to);
-    void kruskal();
     
 public:
     Graph(const int rows, const int cols);
-    std::vector<Edge> getMST();
+    void kruskal();
+    std::vector<Edge> getMST() const;
     static void print(const std::vector<Edge>& g);
 };
 

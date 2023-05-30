@@ -55,6 +55,7 @@ public:
     int getHeight() const;
 
     // the game part
+    void coverPreviousPlayerLocation() const;
     void moveLeft();
     void moveRight();
     void moveUp();

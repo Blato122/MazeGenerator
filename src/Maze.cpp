@@ -1,4 +1,13 @@
 #include "Maze.h"
+#include "Timer.h"
+
+#define DEBUG
+
+#ifdef DEBUG
+#define Time(x) Timer(x)
+#else
+#define Time(x)
+#endif // DEBUG
 
 Maze::Maze(const int rows, const int cols, const std::vector<Edge>& MST) : rows(rows), cols(cols), maze_rows(2 * rows - 1), maze_cols(2 * cols - 1), size(maze_rows * maze_cols) {
     for (const Edge& e : MST) {
@@ -26,6 +35,8 @@ int Maze::getHeight() const{
 }
 
 void Maze::generate() {
+    auto t = Time("generate()");
+
     int horizontal_row_count = 0;
     int vertical_row_count = 0;
     std::vector<Edge> vertical_(vertical);
@@ -197,10 +208,7 @@ void Maze::display() {
     }
 
     glfwMakeContextCurrent(window);
-    //glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // black default?
-    glClear(GL_COLOR_BUFFER_BIT);
 
-    // !
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, keyCallback);
 
@@ -208,14 +216,13 @@ void Maze::display() {
     glLineWidth(2.0f); // optional
 
     setBoundsStartAndFinish();
+    draw();
+    drawBoundsStartAndFinish();
 
     while (!glfwWindowShouldClose(window)) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        draw(); // chyba BARDZO niewydajne??
-        drawBoundsStartAndFinish();
         drawRect(bottom_left_x, bottom_left_y, 1, 0, 0); // player
         glfwSwapBuffers(window);
-        glfwPollEvents(); // co to robi i gdzie
+        glfwPollEvents();
     }
 
     glfwTerminate();
@@ -233,17 +240,30 @@ void Maze::keyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 void Maze::handleKeyPress(int key, int action) {
     if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+        coverPreviousPlayerLocation();
         moveLeft();
     } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        coverPreviousPlayerLocation();
         moveRight();
     } else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+        coverPreviousPlayerLocation();
         moveUp();
     } else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+        coverPreviousPlayerLocation();
         moveDown();
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
         refresh();
     } else {
         return;
+    }
+    std::cout << bottom_left_x << " " << bottom_left_y << std::endl;
+}
+
+void Maze::coverPreviousPlayerLocation() const {
+    if (bottom_left_x == upper_random_int && bottom_left_y == getHeight() - 1) {
+        drawRect(bottom_left_x, bottom_left_y, 0, 1, 0); // green trace so that finish doesn't get covered
+    } else {
+        drawRect(bottom_left_x, bottom_left_y, 1, 1, 0); // yellow trace
     }
 }
 

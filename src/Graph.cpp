@@ -52,8 +52,7 @@ void Graph::kruskal() {
     }
 }
 
-std::vector<Edge> Graph::getMST() {
-    kruskal();
+std::vector<Edge> Graph::getMST() const {
     return MST;
 }
 
