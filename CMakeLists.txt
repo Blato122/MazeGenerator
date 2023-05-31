@@ -16,6 +16,7 @@ add_executable(MazeGenerator
     src/Timer.h
     src/Maze.cpp
     src/Maze.h
+    src/stb_image.h
 )
 
 find_package(glfw3 3.3 REQUIRED)

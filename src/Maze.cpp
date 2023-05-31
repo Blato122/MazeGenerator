@@ -1,6 +1,9 @@
 #include "Maze.h"
 #include "Timer.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #define DEBUG
 
 #ifdef DEBUG
@@ -9,7 +12,8 @@
 #define Time(x)
 #endif // DEBUG
 
-Maze::Maze(const int rows, const int cols, const std::vector<Edge>& MST) : rows(rows), cols(cols), maze_rows(2 * rows - 1), maze_cols(2 * cols - 1), size(maze_rows * maze_cols) {
+Maze::Maze(const int rows, const int cols, const std::vector<Edge>& MST) : rows(rows), cols(cols),
+ maze_rows(2 * rows - 1), maze_cols(2 * cols - 1), size(maze_rows * maze_cols), you_win(false), start_new_game(false) {
     for (const Edge& e : MST) {
         if (e.first + 1 == e.second) {
             horizontal.push_back(e);
@@ -219,8 +223,10 @@ void Maze::display() {
     draw();
     drawBoundsStartAndFinish();
 
-    while (!glfwWindowShouldClose(window)) {
-        drawRect(bottom_left_x, bottom_left_y, 1, 0, 0); // player
+    while (!start_new_game && !glfwWindowShouldClose(window)) {
+        if (!you_win) {
+            drawRect(bottom_left_x, bottom_left_y, 1, 0, 0); // player
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -234,33 +240,110 @@ void Maze::keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         maze_ptr -> handleKeyPress(key, action);
     } else {
         std::cout << "keyCallback static_cast error" << std::endl;
+        glfwTerminate();
         exit(1);
     }
 }
 
 void Maze::handleKeyPress(int key, int action) {
     if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+        if (you_win) return;
         coverPreviousPlayerLocation();
         moveLeft();
     } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        if (you_win) return;
         coverPreviousPlayerLocation();
         moveRight();
     } else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+        if (you_win) return;
         coverPreviousPlayerLocation();
         moveUp();
     } else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+        if (you_win) return;
         coverPreviousPlayerLocation();
         moveDown();
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        if (you_win) return;
         refresh();
+    } else if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+        if (you_win) {
+            start_new_game = true;
+        } else if (playerAtFinish()) {
+            youWin();
+        }
+    } else if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
+        // show help
+    } else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwTerminate();
+        exit(1);
     } else {
         return;
     }
+
     std::cout << bottom_left_x << " " << bottom_left_y << std::endl;
 }
 
+bool Maze::keepPlaying() const {
+    return start_new_game;
+}
+
+bool Maze::playerAtFinish() const {
+    return (bottom_left_x == upper_random_int && bottom_left_y == getHeight() - 1);
+}
+
+void Maze::youWin() {
+    int width = WINDOW_WIDTH;
+    int height = WINDOW_HEIGHT;
+    int channels = 3;
+
+    stbi_uc* image = stbi_load("images/youwin.jpg", &width, &height, &channels, 0);
+    if (!image) {
+        std::cout << "Failed to load image" << std::endl;
+        glfwTerminate();
+        exit(1);
+    }
+
+    // Create texture ID
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // Bind texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Load image data into texture
+    glTexImage2D(GL_TEXTURE_2D, 0, channels, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+    // Free image data
+    stbi_image_free(image);
+
+    // Enable 2D texturing
+    glEnable(GL_TEXTURE_2D);
+    // Start drawing the image
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(-0.5f, getHeight() / 2 - 0.5f);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(getWidth() + 0.5f, getHeight() / 2 - 0.5f);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(getWidth() + 0.5f, getHeight() + 0.5f);
+
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(-0.5f, getHeight() + 0.5f);
+    glEnd();
+
+    you_win = true;
+}
+
 void Maze::coverPreviousPlayerLocation() const {
-    if (bottom_left_x == upper_random_int && bottom_left_y == getHeight() - 1) {
+    if (playerAtFinish()) {
         drawRect(bottom_left_x, bottom_left_y, 0, 1, 0); // green trace so that finish doesn't get covered
     } else {
         drawRect(bottom_left_x, bottom_left_y, 1, 1, 0); // yellow trace

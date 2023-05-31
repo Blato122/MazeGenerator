@@ -35,6 +35,9 @@ private:
     std::vector<Edge> horizontal;
     std::vector<std::string> maze;
 
+    bool you_win;
+    bool start_new_game;
+
 public:
     Maze(const int rows, const int cols, const std::vector<Edge>& MST);
     void generate();
@@ -55,6 +58,9 @@ public:
     int getHeight() const;
 
     // the game part
+    bool playerAtFinish() const;
+    void youWin();
+    bool keepPlaying() const;
     void coverPreviousPlayerLocation() const;
     void moveLeft();
     void moveRight();

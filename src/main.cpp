@@ -20,8 +20,12 @@ int main(int argc, char *argv[]) {
     g.kruskal();
     auto MST = g.getMST();
 
-    Maze m(rows, cols, MST);
-    m.generate();
-    m.print();
-    m.display();
+    bool keep_playing;
+    do {
+        Maze m(rows, cols, MST);
+        m.generate();
+        m.print();
+        m.display();
+        keep_playing = m.keepPlaying();
+    } while (keep_playing);
 }
