@@ -249,23 +249,23 @@ void Maze::keyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 void Maze::handleKeyPress(int key, int action) {
     if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-        if (you_win) return;
+        if (you_win || help_displayed) return;
         coverPreviousPlayerLocation();
         moveLeft();
     } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-        if (you_win) return;
+        if (you_win || help_displayed) return;
         coverPreviousPlayerLocation();
         moveRight();
     } else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-        if (you_win) return;
+        if (you_win || help_displayed) return;
         coverPreviousPlayerLocation();
         moveUp();
     } else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-        if (you_win) return;
+        if (you_win || help_displayed) return;
         coverPreviousPlayerLocation();
         moveDown();
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        if (you_win) return;
+        if (you_win || help_displayed) return;
         refresh();
     } else if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
         if (you_win) {
