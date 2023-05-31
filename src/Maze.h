@@ -37,6 +37,9 @@ private:
 
     bool you_win;
     bool start_new_game;
+    bool help_displayed;
+
+    GLFWwindow* window_global; // huh
 
 public:
     Maze(const int rows, const int cols, const std::vector<Edge>& MST);
@@ -59,7 +62,9 @@ public:
 
     // the game part
     bool playerAtFinish() const;
-    void youWin();
+    void closeHelp();
+    void displayHelp();
+    void displayYouWin();
     bool keepPlaying() const;
     void coverPreviousPlayerLocation() const;
     void moveLeft();

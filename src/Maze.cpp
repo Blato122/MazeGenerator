@@ -13,7 +13,8 @@
 #endif // DEBUG
 
 Maze::Maze(const int rows, const int cols, const std::vector<Edge>& MST) : rows(rows), cols(cols),
- maze_rows(2 * rows - 1), maze_cols(2 * cols - 1), size(maze_rows * maze_cols), you_win(false), start_new_game(false) {
+ maze_rows(2 * rows - 1), maze_cols(2 * cols - 1), size(maze_rows * maze_cols), you_win(false), 
+ start_new_game(false), help_displayed(false) {
     for (const Edge& e : MST) {
         if (e.first + 1 == e.second) {
             horizontal.push_back(e);
@@ -206,6 +207,7 @@ void Maze::display() {
 
     // create window
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Maze", NULL, NULL);
+    window_global = window;
     if (!window) {
         glfwTerminate();
         return;
@@ -224,7 +226,7 @@ void Maze::display() {
     drawBoundsStartAndFinish();
 
     while (!start_new_game && !glfwWindowShouldClose(window)) {
-        if (!you_win) {
+        if ( !(you_win || help_displayed) ) {
             drawRect(bottom_left_x, bottom_left_y, 1, 0, 0); // player
         }
         glfwSwapBuffers(window);
@@ -269,10 +271,16 @@ void Maze::handleKeyPress(int key, int action) {
         if (you_win) {
             start_new_game = true;
         } else if (playerAtFinish()) {
-            youWin();
+            displayYouWin();
         }
     } else if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
-        // show help
+        if (!you_win) {
+            if (help_displayed) {
+                closeHelp();
+            } else {
+                displayHelp();
+            }
+        }
     } else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwTerminate();
         exit(1);
@@ -291,7 +299,66 @@ bool Maze::playerAtFinish() const {
     return (bottom_left_x == upper_random_int && bottom_left_y == getHeight() - 1);
 }
 
-void Maze::youWin() {
+void Maze::closeHelp() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    draw();
+    drawBoundsStartAndFinish();
+    help_displayed = false;
+}
+
+void Maze::displayHelp() {
+    int width = WINDOW_WIDTH;
+    int height = WINDOW_HEIGHT;
+    int channels = 3;
+
+    stbi_uc* image = stbi_load("images/help.jpg", &width, &height, &channels, 0);
+    if (!image) {
+        std::cout << "Failed to load image" << std::endl;
+        glfwTerminate();
+        exit(1);
+    }
+
+    // Create texture ID
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // Bind texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Load image data into texture
+    glTexImage2D(GL_TEXTURE_2D, 0, channels, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+    // Free image data
+    stbi_image_free(image);
+
+    // Enable 2D texturing
+    glEnable(GL_TEXTURE_2D);
+    // Start drawing the image
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(-0.5f, getHeight() / 2 - 0.5f);
+
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(getWidth() + 0.5f, getHeight() / 2 - 0.5f);
+
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(getWidth() + 0.5f, getHeight() + 0.5f);
+
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(-0.5f, getHeight() + 0.5f);
+    glEnd();
+
+    help_displayed = true;
+}
+
+void Maze::displayYouWin() {
     int width = WINDOW_WIDTH;
     int height = WINDOW_HEIGHT;
     int channels = 3;
