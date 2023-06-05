@@ -330,7 +330,7 @@ void Maze::displayYouWin() {
     float min_y = getHeight() / 2 - 0.5f;
     float max_y = getHeight() + 0.5f;
 
-    Graphics::displayImage(WINDOW_WIDTH, WINDOW_HEIGHT, 3, "images/youlose.jpg", min_x, max_x, min_y, max_y);
+    Graphics::displayImage(WINDOW_WIDTH, WINDOW_HEIGHT, 3, "images/youwin.jpg", min_x, max_x, min_y, max_y);
 
     you_win = true;
 }
