@@ -1,8 +1,4 @@
 #include "Maze.h"
-#include "Timer.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 #define DEBUG
 
@@ -14,7 +10,8 @@
 
 Maze::Maze(const int rows, const int cols, const std::vector<Edge>& MST) : rows(rows), cols(cols),
  maze_rows(2 * rows - 1), maze_cols(2 * cols - 1), size(maze_rows * maze_cols), you_win(false), 
- start_new_game(false), help_displayed(false) {
+ start_new_game(false), help_displayed(false), you_lose(false), pause_duration(0),
+ MAX_TIME_SECS(std::sqrt(rows * cols)) {
     for (const Edge& e : MST) {
         if (e.first + 1 == e.second) {
             horizontal.push_back(e);
@@ -95,35 +92,6 @@ void Maze::print() const {
     }
 }
 
-void Maze::drawVerticalLine(float x, float y_from, float y_to) const {
-    glBegin(GL_LINES);
-        glVertex2f(x, y_from);
-        glVertex2f(x, y_to);
-    glEnd();
-}
-
-void Maze::drawHorizontalLine(float x_from, float x_to, float y) const {
-    glBegin(GL_LINES);
-        glVertex2f(x_from, y);
-        glVertex2f(x_to, y);
-    glEnd();
-}
-
-void Maze::drawRect(float bl_x, float bl_y, float r, float g, float b) const {
-    glBegin(GL_QUADS);
-        if (r >= 0 && r <= 1 && g >= 0 && g <= 1 && b >= 0 && b <= 1) {
-            glColor3f(r, g, b); // some color
-        } else {
-            glColor3f(0, 0, 1); // blue
-        }
-        glVertex2f(bl_x + 0.5, bl_y + 0.25); // bottom-left
-        glVertex2f(bl_x + 1.5, bl_y + 0.25); // bottom-right
-        glVertex2f(bl_x + 1.5, bl_y + 0.75); // top-right
-        glVertex2f(bl_x + 0.5, bl_y + 0.75); // top-left
-        glColor3f(1, 1, 1); // white again
-    glEnd();
-}
-
 void Maze::draw() const {
     int width = getWidth();
     int height = getHeight();
@@ -143,9 +111,9 @@ void Maze::draw() const {
 
         for (int col = 0; col < width; ++col) {
             if (maze[row][col] == '-') {
-                drawHorizontalLine(col, col + 1.0, height - hrzn_row_fix);
+                Graphics::drawHorizontalLine(col, col + 1.0, height - hrzn_row_fix);
             } else if (maze[row][col] == '|') {
-                drawVerticalLine(col, height - vert_row_fix, height - vert_row_fix - 1);
+                Graphics::drawVerticalLine(col, height - vert_row_fix, height - vert_row_fix - 1);
             } else if (maze[row][col] == ' ' && row % 2 == 1) { // only for horizontal rows
                 int space_count = 1;
                 int col_ = col;
@@ -154,7 +122,7 @@ void Maze::draw() const {
                 }
 
                 if (space_count == 1 && col_ < width && maze[row][col_] != '|') { //!!
-                    drawHorizontalLine(col, col + 1.0, height - hrzn_row_fix);
+                    Graphics::drawHorizontalLine(col, col + 1.0, height - hrzn_row_fix);
                 }
             }
         }
@@ -185,18 +153,42 @@ void Maze::drawBoundsStartAndFinish() const {
     int height = getHeight();
 
     // generate top and bottom bounds with one hole (start and finish)
-    drawHorizontalLine(0, upper_random_int, height);
-    drawHorizontalLine(upper_random_int + 2, width, height);
-    drawRect(upper_random_int, height - 1, 0, 1, 0); // finish rect
+    Graphics::drawHorizontalLine(0, upper_random_int, height);
+    Graphics::drawHorizontalLine(upper_random_int + 2, width, height);
+    Graphics::drawRect(upper_random_int, height - 1, 0, 1, 0); // finish rect
 
-    drawHorizontalLine(0, lower_random_int, height / 2);
-    drawHorizontalLine(lower_random_int + 2, width, height / 2);
+    Graphics::drawHorizontalLine(0, lower_random_int, height / 2);
+    Graphics::drawHorizontalLine(lower_random_int + 2, width, height / 2);
     
     // generate vertical bounds
-    drawVerticalLine(0, height, height / 2);
-    drawVerticalLine(width, height, height / 2);
+    Graphics::drawVerticalLine(0, height, height / 2);
+    Graphics::drawVerticalLine(width, height, height / 2);
 
     glFlush();
+}
+
+void Maze::drawUpdateTimer() {
+    glLineWidth(10.0f);
+    Graphics::drawHorizontalLine(0, getWidth(), getHeight() + 1, 0, 0, 0); // cover previous timer
+    const auto current_time = std::chrono::high_resolution_clock::now();
+    const float time_elapsed = std::chrono::duration<float>((current_time - maze_start)).count() - pause_duration;
+    const float time_left = MAX_TIME_SECS - time_elapsed;
+    if (time_left <= 0) {
+        timesUp();
+        displayYouLose();
+        glLineWidth(2.0f);
+        return;
+    }
+    Graphics::drawHorizontalLine(0, getWidth() / (MAX_TIME_SECS / time_left), getHeight() + 1, 1 - (time_left / MAX_TIME_SECS), time_left / MAX_TIME_SECS, 0);
+    glLineWidth(2.0f);
+}
+
+void Maze::timesUp() {
+    you_lose = true;
+}
+
+void Maze::startTimer() {
+    maze_start = std::chrono::high_resolution_clock::now();
 }
 
 void Maze::display() {
@@ -218,16 +210,21 @@ void Maze::display() {
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, keyCallback);
 
-    glOrtho(-0.5, getWidth() + 0.5, getHeight() / 2 - 0.5, getHeight() + 0.5, -1, 1);
+    glOrtho(-0.5, getWidth() + 0.5, getHeight() / 2 - 0.5, getHeight() + 0.5 + 1, -1, 1);
     glLineWidth(2.0f); // optional
 
     setBoundsStartAndFinish();
     draw();
     drawBoundsStartAndFinish();
+    startTimer();
 
     while (!start_new_game && !glfwWindowShouldClose(window)) {
-        if ( !(you_win || help_displayed) ) {
-            drawRect(bottom_left_x, bottom_left_y, 1, 0, 0); // player
+        if (playerAtFinish()) {
+            displayYouWin();
+        }
+        if ( !(you_win || help_displayed || you_lose) ) {
+            Graphics::drawRect(bottom_left_x, bottom_left_y, 1, 0, 0); // player
+            drawUpdateTimer(); // rysowanie ok ale ma być przerwane liczenie na ten czas!!
         }
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -248,38 +245,32 @@ void Maze::keyCallback(GLFWwindow* window, int key, int scancode, int action, in
 }
 
 void Maze::handleKeyPress(int key, int action) {
-    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-        if (you_win || help_displayed) return;
+    if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT) ) {
+        if (you_win || help_displayed || you_lose) return;
         coverPreviousPlayerLocation();
         moveLeft();
-    } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-        if (you_win || help_displayed) return;
+    } else if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT) ) {
+        if (you_win || help_displayed || you_lose) return;
         coverPreviousPlayerLocation();
         moveRight();
-    } else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-        if (you_win || help_displayed) return;
+    } else if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT) ) {
+        if (you_win || help_displayed || you_lose) return;
         coverPreviousPlayerLocation();
         moveUp();
-    } else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-        if (you_win || help_displayed) return;
+    } else if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT) ) {
+        if (you_win || help_displayed || you_lose) return;
         coverPreviousPlayerLocation();
         moveDown();
     } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        if (you_win || help_displayed) return;
+        if (you_win || help_displayed || you_lose) return;
         refresh();
     } else if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
-        if (you_win) {
+        if (you_win || you_lose) {
             start_new_game = true;
-        } else if (playerAtFinish()) {
-            displayYouWin();
-        }
+        } 
     } else if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
-        if (!you_win) {
-            if (help_displayed) {
-                closeHelp();
-            } else {
-                displayHelp();
-            }
+        if (! (you_win || you_lose) ) {
+            help_displayed ? closeHelp() : displayHelp();
         }
     } else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwTerminate();
@@ -304,116 +295,51 @@ void Maze::closeHelp() {
     draw();
     drawBoundsStartAndFinish();
     help_displayed = false;
+
+    const auto current_time = std::chrono::high_resolution_clock::now();
+    pause_duration += std::chrono::duration<float>((current_time - pause_start)).count();
 }
 
 void Maze::displayHelp() {
-    int width = WINDOW_WIDTH;
-    int height = WINDOW_HEIGHT;
-    int channels = 3;
+    pause_start = std::chrono::high_resolution_clock::now();
 
-    stbi_uc* image = stbi_load("images/help.jpg", &width, &height, &channels, 0);
-    if (!image) {
-        std::cout << "Failed to load image" << std::endl;
-        glfwTerminate();
-        exit(1);
-    }
+    float min_x = -0.5f;
+    float max_x = getWidth() + 0.5f;
+    float min_y = getHeight() / 2 - 0.5f;
+    float max_y = getHeight() + 0.5f;
 
-    // Create texture ID
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    // Bind texture
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Load image data into texture
-    glTexImage2D(GL_TEXTURE_2D, 0, channels, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
-    // Free image data
-    stbi_image_free(image);
-
-    // Enable 2D texturing
-    glEnable(GL_TEXTURE_2D);
-    // Start drawing the image
-
-    glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(-0.5f, getHeight() / 2 - 0.5f);
-
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(getWidth() + 0.5f, getHeight() / 2 - 0.5f);
-
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(getWidth() + 0.5f, getHeight() + 0.5f);
-
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(-0.5f, getHeight() + 0.5f);
-    glEnd();
+    Graphics::displayImage(WINDOW_WIDTH, WINDOW_HEIGHT, 3, "images/help.jpg", min_x, max_x, min_y, max_y);
 
     help_displayed = true;
 }
 
+void Maze::displayYouLose() {
+    float min_x = -0.5f;
+    float max_x = getWidth() + 0.5f;
+    float min_y = getHeight() / 2 - 0.5f;
+    float max_y = getHeight() + 0.5f;
+
+    Graphics::displayImage(WINDOW_WIDTH, WINDOW_HEIGHT, 3, "images/youlose.jpg", min_x, max_x, min_y, max_y);
+
+    you_lose = true;
+}
+
 void Maze::displayYouWin() {
-    int width = WINDOW_WIDTH;
-    int height = WINDOW_HEIGHT;
-    int channels = 3;
+    float min_x = -0.5f;
+    float max_x = getWidth() + 0.5f;
+    float min_y = getHeight() / 2 - 0.5f;
+    float max_y = getHeight() + 0.5f;
 
-    stbi_uc* image = stbi_load("images/youwin.jpg", &width, &height, &channels, 0);
-    if (!image) {
-        std::cout << "Failed to load image" << std::endl;
-        glfwTerminate();
-        exit(1);
-    }
-
-    // Create texture ID
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    // Bind texture
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Load image data into texture
-    glTexImage2D(GL_TEXTURE_2D, 0, channels, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
-    // Free image data
-    stbi_image_free(image);
-
-    // Enable 2D texturing
-    glEnable(GL_TEXTURE_2D);
-    // Start drawing the image
-    glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(-0.5f, getHeight() / 2 - 0.5f);
-
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(getWidth() + 0.5f, getHeight() / 2 - 0.5f);
-
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(getWidth() + 0.5f, getHeight() + 0.5f);
-
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(-0.5f, getHeight() + 0.5f);
-    glEnd();
+    Graphics::displayImage(WINDOW_WIDTH, WINDOW_HEIGHT, 3, "images/youlose.jpg", min_x, max_x, min_y, max_y);
 
     you_win = true;
 }
 
 void Maze::coverPreviousPlayerLocation() const {
     if (playerAtFinish()) {
-        drawRect(bottom_left_x, bottom_left_y, 0, 1, 0); // green trace so that finish doesn't get covered
+        Graphics::drawRect(bottom_left_x, bottom_left_y, 0, 1, 0); // green trace so that finish doesn't get covered
     } else {
-        drawRect(bottom_left_x, bottom_left_y, 1, 1, 0); // yellow trace
+        Graphics::drawRect(bottom_left_x, bottom_left_y, 1, 1, 0); // yellow trace
     }
 }
 

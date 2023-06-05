@@ -6,6 +6,11 @@
 #include <iostream>
 #include <random>
 #include <cstdlib>
+#include <chrono>
+#include <cmath>
+
+#include "Timer.h"
+#include "Graphics.h"
 
 #include <GLFW/glfw3.h>
 
@@ -16,6 +21,7 @@ using Edge = std::pair<int, int>;
 
 class Maze {
 private:
+    const float MAX_TIME_SECS;
     // strange variables (but I do use them in some functions)
     // in order to get width or height, use getWidth() and getHeight()
     int rows;
@@ -38,6 +44,11 @@ private:
     bool you_win;
     bool start_new_game;
     bool help_displayed;
+    bool you_lose;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> maze_start;
+    std::chrono::time_point<std::chrono::high_resolution_clock> pause_start;
+    float pause_duration; // total duration
 
     GLFWwindow* window_global; // huh
 
@@ -46,14 +57,10 @@ public:
     void generate();
     void print() const;
 
-    // funkcje od rysowania linii i rect wywalić do osobnej klasy może
-    void drawVerticalLine(float x, float y_from, float y_to) const;
-    void drawHorizontalLine(float x_from, float x_to, float y) const;
-    void drawRect(float bl_x, float bl_y, float r, float g, float b) const;
-
     void draw() const;
     void setBoundsStartAndFinish();
     void drawBoundsStartAndFinish() const;
+    void drawUpdateTimer();
     void display();
 
     // width, height
@@ -61,10 +68,13 @@ public:
     int getHeight() const;
 
     // the game part
+    void timesUp();
+    void startTimer();
     bool playerAtFinish() const;
     void closeHelp();
     void displayHelp();
     void displayYouWin();
+    void displayYouLose();
     bool keepPlaying() const;
     void coverPreviousPlayerLocation() const;
     void moveLeft();

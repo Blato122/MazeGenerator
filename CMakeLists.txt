@@ -16,6 +16,8 @@ add_executable(MazeGenerator
     src/Timer.h
     src/Maze.cpp
     src/Maze.h
+    src/Graphics.cpp
+    src/Graphics.h
     src/stb_image.h
 )
 
